@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Single‐Cell Analysis Pipeline</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+  <style>
+    /* 侧边栏导航文字放大 */
+    .sidebar .nav-link {
+      font-size: 1.25rem;    /* 20px，相当于 h5 大小 */
+      padding: 0.75rem 1rem; /* 增加一点点间距 */
+    }
+    /* 保证选中和不可用状态也不被覆盖 */
+    .sidebar .nav-link.active {
+      font-weight: 600;
+    }
+    .sidebar .nav-link.disabled {
+      font-size: 1.25rem;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Only show sidebar after login -->
+      {% if current_user.is_authenticated %}
+      <nav class="col-md-2 bg-white vh-100 p-3 sidebar border-end">
+        <h5 class="mb-3"><strong>Steps</strong></h5>
+        <ul class="nav flex-column">
+          <!-- Upload always available -->
+          <li class="nav-item mb-1">
+            <a href="{{ url_for('upload.upload') }}"
+               class="nav-link {% if request.endpoint=='upload.upload' %}active{% endif %}">1. Upload</a>
+          </li>
+          <!-- QC unlocked after upload_done -->
+          <li class="nav-item mb-1">
+            <a href="{{ url_for('qc.qc_index') }}"
+               class="nav-link {% if not session.get('upload_done') %}disabled{% endif %} {% if request.endpoint.startswith('qc.') %}active{% endif %}">2. Quality Control</a>
+          </li>
+          <!-- Clustering unlocked after qc_done -->
+          <li class="nav-item mb-1">
+            <a href="{{ url_for('cluster.cluster_index') }}"
+               class="nav-link {% if not session.get('filter_done') %}disabled{% endif %} {% if request.endpoint.startswith('cluster.') %}active{% endif %}">3. Clustering</a>
+          </li>
+          <!-- Annotation, Scoring, Enrichment remain disabled until implemented -->
+          <!-- 修改原来的 Annotation 行为 -->
+          <li class="nav-item mb-1">
+            <a href="{{ url_for('annotate.annotate_index') }}"
+               class="nav-link {% if not session.get('cluster_plot') %}disabled{% endif %} {% if request.endpoint.startswith('annotate.') %}active{% endif %}">4. Annotation</a>
+          </li>
+
+          <li class="nav-item mb-1">
+            <a href="{{ url_for('score.score_index') }}"
+               class="nav-link {% if not session.get('annotate_done') %}disabled{% endif %}
+                              {% if request.endpoint.startswith('score.') %}active{% endif %}">
+              5. Scoring
+            </a>
+          </li>
+
+        <li class="nav-item mb-1">
+  {# 如果当前在 enrich 页面（ORA 或 GSEA），就给它 active #}
+  <span class="nav-link {% if request.endpoint=='enrich.enrich_index' %}active{% endif %}">
+    6. Enrichment
+  </span>
+  <ul class="list-unstyled ps-3 small mb-0">
+    <li>
+      <a href="{{ url_for('enrich.enrich_index', method='ora') }}"
+         class="nav-link {% if request.args.get('method')=='ora' %}active{% endif %}">
+        ORA
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('enrich.enrich_index', method='gsea') }}"
+         class="nav-link {% if request.args.get('method')=='gsea' %}active{% endif %}">
+        GSEA
+      </a>
+    </li>
+  </ul>
+</li>
+
+        </ul>
+      </nav>
+
+      {% endif %}
+
+      <!-- Main content area -->
+      {% if current_user.is_authenticated %}
+        <main class="col-md-9 py-4 ps-3">
+      {% else %}
+        <main class="col-md-12 d-flex align-items-center justify-content-center" style="height:100vh;">
+      {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>

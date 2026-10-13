@@ -1,0 +1,14 @@
+Flask
+Flask-Login
+Werkzeug
+PyMySQL
+DBUtils
+SQLAlchemy
+scanpy
+numpy
+pandas
+gseapy
+matplotlib
+celltypist
+seaborn
+leidenalg

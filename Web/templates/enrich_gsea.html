@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4">GSEA Enrichment Analysis</h2>
+
+  {# Flash messages #}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, msg in messages %}
+        <div class="alert alert-{{ 'danger' if category=='danger' else 'info' }} alert-dismissible fade show" role="alert">
+          {{ msg }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="post"
+        enctype="multipart/form-data"
+        action="{{ url_for('enrich.enrich_index', method='gsea') }}"
+        class="row g-3 align-items-end">
+
+    <div class="col-md-3">
+      <label for="organism" class="form-label">Organism</label>
+      <select id="organism" name="organism" class="form-select">
+        <option value="Human" {% if selected_organism=='Human' %}selected{% endif %}>Human</option>
+        <option value="Mouse" {% if selected_organism=='Mouse' %}selected{% endif %}>Mouse</option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="gene_set" class="form-label">Gene Set:</label>
+      <select id="gene_set" name="gene_set" class="form-select">
+        {% for gs in gene_sets %}
+          <option value="{{ gs }}"
+                  {% if gs == selected_gene_set %}selected{% endif %}>{{ gs }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+
+    <div class="col-md-5">
+      <label class="form-label">Ranked List (Necessary: gene and log2FC)</label>
+      <input type="file" id="gene_file" name="gene_file"
+             accept=".csv,.txt,.rnk" class="d-none" required>
+      <div class="input-group">
+        <input type="text" id="file-name" class="form-control"
+               placeholder="No file chosen" readonly>
+        <button type="button" id="btn-file" class="btn btn-outline-secondary">
+          Choose File
+        </button>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Run GSEA</button>
+    </div>
+  </form>
+
+  {% if enrich_done and gsea_plot %}
+    <hr class="my-4">
+    <h5>GSEA Plot</h5>
+    <div class="card p-2 mb-3">
+      <img src="{{ url_for('static', filename=gsea_plot) }}"
+           class="img-fluid w-100" style="max-height:600px;"
+           alt="GSEA Plot">
+    </div>
+  {% endif %}
+</div>
+
+<script>
+// Trigger the hidden file input
+document.getElementById('btn-file').addEventListener('click', function(){
+  document.getElementById('gene_file').click();
+});
+// Display chosen filename
+document.getElementById('gene_file').addEventListener('change', function(){
+  document.getElementById('file-name').value =
+    this.files.length ? this.files[0].name : 'No file chosen';
+});
+</script>
+{% endblock %}

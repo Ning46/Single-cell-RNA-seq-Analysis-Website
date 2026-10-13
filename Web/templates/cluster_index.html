@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-4 rounded shadow mt-4 w-100">
+  <h2 class="section-title">Clustering</h2>
+
+  {# 未做过聚类，显示 Run 表单 #}
+  {% if not cluster_done %}
+  <form action="{{ url_for('cluster.cluster_index') }}" method="post" class="text-center">
+    <label class="me-2"><strong>Choose method:</strong></label>
+    <select name="method" class="form-select d-inline-block w-auto">
+      <option value="umap" {% if method=='umap' %}selected{% endif %}>UMAP</option>
+      <option value="tsne" {% if method=='tsne' %}selected{% endif %}>t-SNE</option>
+    </select>
+    <button type="submit" class="btn btn-primary ms-2">Run</button>
+  </form>
+  {% endif %}
+
+  {# 已完成聚类，显示结果和跳转按钮 #}
+  {% if cluster_plot %}
+  <div class="text-center mb-4">
+    <h5>Cluster Result ({{ method|upper }})</h5>
+  </div>
+  <div class="text-center">
+    <img
+      src="{{ cluster_plot_url }}"
+      alt="Cluster Plot"
+      class="img-fluid"
+      style="width:100%; max-height:600px; object-fit:contain;"
+    >
+  </div>
+  <div class="text-center mt-4">
+       <a href="{{ url_for('annotate.annotate_index') }}" class="btn btn-success btn-lg">
+      Proceed to Annotation
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+  <h2 class="section-title">Scoring</h2>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, msg in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+  <form method="post">
+    <div class="mb-3">
+      <label for="gene_set" class="form-label">Gene Set:</label>
+      <select id="gene_set" name="gene_set" class="form-select">
+        {% for gs in gene_sets %}
+          <option value="{{ gs }}"
+                  {% if gs == selected_gene_set %}selected{% endif %}>{{ gs }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="species" class="form-label">Species:</label>
+      <select id="species" name="species" class="form-select">
+        {% for sp in species_list %}
+          <option value="{{ sp }}"
+            {% if sp == selected_species %}selected{% endif %}>{{ sp | capitalize }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary" {% if score_done %}disabled{% endif %}>Run Scoring</button>
+  </form>
+
+  {% if score_done %}
+    <h4>Score UMAP</h4>
+    <img src="{{ url_for('static', filename=score_plot) }}" alt="Score UMAP">
+  {% endif %}
+  {% if group_done %}
+    <h4>Group UMAP</h4>
+    <img src="{{ url_for('static', filename=group_plot) }}" alt="Group UMAP">
+  {% endif %}
+  {% if dotplot_done %}
+    <h4>Dotplot</h4>
+    <img src="{{ url_for('static', filename=dotplot) }}" alt="Dotplot">
+  {% endif %}
+  {% if volcano_done %}
+    <h4>Volcano</h4>
+    <img src="{{ url_for('static', filename=volcano) }}" alt="Volcano">
+  {% endif %}
+  {# score.html 中，循环完火山图后 #}
+  {% if deg_csv %}
+    <div class="mt-4">
+      <h4>Differential Genes Table</h4>
+      <a href="{{ url_for('static', filename=deg_csv) }}"
+         class="btn btn-outline-primary"
+         download="differential_genes.csv">
+        Download DE Genes (CSV)
+      </a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

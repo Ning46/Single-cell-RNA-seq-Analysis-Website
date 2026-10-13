@@ -1,0 +1,56 @@
+{# templates/upload.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card mx-auto mt-4" style="max-width: 600px;">
+  <div class="card-body">
+
+    {% if not session.get('upload_done') %}
+      <h3 class="card-title text-center mb-4">Upload 10X Dataset</h3>
+      <form action="{{ url_for('upload.upload') }}"
+            method="post"
+            enctype="multipart/form-data">
+        <div class="mb-3 text-start">
+          <label for="file" class="form-label"><strong>Select .zip file:</strong></label>
+
+          <div class="input-group">
+            {# 真正的 file input 隐藏掉 #}
+            <input
+              type="file"
+              class="form-control d-none"
+              id="file"
+              name="file"
+              accept=".zip"
+              onchange="document.getElementById('file-name').textContent =
+                         this.files.length ? this.files[0].name : 'No file chosen';"
+              required
+            >
+
+            {# 自定义触发按钮 #}
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              onclick="document.getElementById('file').click();"
+            >Choose .zip</button>
+
+            {# 显示文件名的 span #}
+            <span class="form-control" id="file-name">No file chosen</span>
+          </div>
+        </div>
+
+        <div class="d-grid mt-3">
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+      </form>
+    {% else %}
+      <h3 class="card-title text-center mb-4">Upload Completed!</h3>
+      <div class="text-center">
+        <a href="{{ url_for('qc.qc_index') }}" class="btn btn-success">
+          Proceed to QC
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

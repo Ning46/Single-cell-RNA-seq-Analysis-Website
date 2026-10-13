@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2 class="section-title">Cell Type Annotation</h2>
+
+  {# 如果有错误信息，就在表单上方以红色提示框展示 #}
+  {% if error_msg %}
+    <div class="alert alert-danger">
+      {{ error_msg }}
+    </div>
+  {% endif %}
+
+  <form method="post">
+    <div class="mb-3">
+      <label for="model" class="form-label">Pretrained Model:</label>
+      <select class="form-select" id="model" name="model">
+        {% for model in model_list %}
+          <option value="{{ model }}"
+                  {% if loop.first %}selected{% endif %}>
+            {{ model }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="method" class="form-label">Plot Method:</label>
+      <select class="form-select" id="method" name="method">
+        <option value="umap">UMAP</option>
+        <option value="tsne">t-SNE</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Run Annotation</button>
+  </form>
+
+  {# 已经有一到多张图时，展示可滚动的大图区域 #}
+  {% if plot_list %}
+      <!-- 2) 滚动容器 -->
+      <div class="mt-4">
+        <h4>Annotated Plots:</h4>
+        <div
+          style="
+            max-height:800px;
+            overflow-y:auto;
+            width:100%;
+            border:1px solid #ddd;
+            padding:10px;
+            background:#fff;
+          ">
+          <div class="d-flex flex-wrap justify-content-start">
+            {% for img in plot_list %}
+            <div
+              class="me-3 mb-3"
+              style="flex:0 0 48%; max-width:48%;">
+              <div class="card h-100 shadow-sm">
+                <img
+                  src="{{ url_for('static', filename=img) }}"
+                  class="card-img-top"
+                  style="width:100%; height:auto;"
+                  alt="Annotated Plot">
+                <div class="card-footer text-center">
+                  {{ img.split('/')[-1].rsplit('_',1)[0] }}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+    <div class="text-center mt-4">
+      <a href="{{ url_for('score.score_index') }}"
+         class="btn btn-success px-4">
+        Proceed to Scoring
+      </a>
+    </div>
+  </div>
+{% endif %}
+
+
+</div>
+{% endblock %}

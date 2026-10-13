@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white p-4 rounded shadow mt-4 w-100">
+  <h2 class="mb-4 text-center">Quality Control (QC)</h2>
+
+  <div class="mb-4">
+    <h5 class="mb-3 text-center">QC Plot Preview</h5>
+      {% if qc_done %}
+      <img src="{{ qc_plot_url }}"
+             alt="QC Plot"
+             class="img-fluid"
+             style="width:100%; max-height:600px; object-fit:contain;">
+      {% else %}
+      <p>Please run QC first.</p>
+      {% endif %}
+  </div>
+
+  {# 如果还没做过 QC，就显示 Filter 表单 #}
+  {% if not filter_done %}
+  <form action="{{ url_for('qc.qc_filter') }}" method="post">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label for="min_genes" class="form-label"><strong>Minimum number of genes</strong></label>
+        <input type="number" class="form-control" id="min_genes" name="min_genes" value="200" required>
+      </div>
+      <div class="col-md-4">
+        <label for="max_genes" class="form-label"><strong>Maximum number of genes</strong></label>
+        <input type="number" class="form-control" id="max_genes" name="max_genes" value="2500" required>
+      </div>
+      <div class="col-md-4">
+        <label for="qc_percent" class="form-label"><strong>Mitochondrial % threshold</strong></label>
+        <input type="number" class="form-control" id="qc_percent" name="qc_percent" value="5.0" step="0.1" required>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-primary btn-lg">Apply Filter</button>
+    </div>
+  </form>
+  {% else %}
+  <!-- Filter 已完成后，提示并显示跳转按钮 -->
+  <div class="text-center mt-4">
+    <p class="mb-3 text-success"><strong>Filter completed！</strong></p>
+    <a href="{{ url_for('cluster.cluster_index') }}" class="btn btn-success btn-lg">
+      Proceed to Clustering
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
