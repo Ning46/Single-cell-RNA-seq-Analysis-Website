@@ -14,5 +14,5 @@ Flask application for single-cell analysis: account registration, data upload, q
 
 IDE settings, bytecode, caches, uploaded data, generated analysis outputs and bundled biological datasets were excluded. Obtain appropriate datasets separately and check their redistribution terms. Data-loading scripts require database tables and input CSV files; `load_new_data.py` clears existing gene-set tables and `save_libraries.py` replaces the library table.
 
-The database schema, input data and models are missing from the original archive. Python syntax was checked; end-to-end execution has not been validated. This is a research project, and publishing its source does not deploy a live website. Before hosting for multiple users, review shared pipeline state, uploaded archive extraction and user-data isolation.
+The database schema, input data and models are missing from the original archive. This is a research project, and publishing its source does not deploy a live website. Before hosting for multiple users, review shared pipeline state, uploaded archive extraction and user-data isolation.
 
