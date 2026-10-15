@@ -16,4 +16,3 @@ IDE settings, bytecode, caches, uploaded data, generated analysis outputs and bu
 
 The database schema, input data and models are missing from the original archive. Python syntax was checked; end-to-end execution has not been validated. This is a research project, and publishing its source does not deploy a live website. Before hosting for multiple users, review shared pipeline state, uploaded archive extraction and user-data isolation.
 
-No software license was supplied in the original archive.
